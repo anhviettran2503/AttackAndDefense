@@ -14,8 +14,8 @@ public class LoadSpine : MonoBehaviour
     [SerializeField] private string attackerID;
     [SerializeField] private string defenderID;
 
-    [SerializeField] private string attackerGenesID;
-    [SerializeField] private string defenderGenesID;
+    private string attackerGenesID;
+    private string defenderGenesID;
 
     public string AttackerGenes => attackerGenesID;
     public string DefenderGenes => defenderGenesID;

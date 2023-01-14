@@ -6,5 +6,13 @@ using UnityEngine;
 
 public class Attacker : Character
 {
-   
+    private void Start()
+    {
+        maxHp = 16;
+        currentHp = maxHp;
+    }
+    private void OnDestroy()
+    {
+        
+    }
 }

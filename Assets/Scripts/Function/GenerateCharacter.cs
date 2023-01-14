@@ -11,20 +11,28 @@ public class GenerateCharacter : MonoBehaviour
 {
     [SerializeField] Attacker attackerPrefab;
     [SerializeField] Defender defenderPrefab;
-
-
+    private List<Character> characters = new List<Character>();
+    public List<Character> Characters => characters;
     private void Start()
     {
         Mixer.Init();
        
     }
-    public void GenAttackers(string geneID)
+    public void GenAttackers(string geneID,int amount)
     {
-        var character= GetChar(CharacterType.Attacker, geneID);
+        for (int i = 0; i < amount; i++)
+        {
+            var character = GetChar(CharacterType.Attacker, geneID);
+            characters.Add(character);
+        }
     }
-    public void GenDefenders(string geneID)
+    public void GenDefenders(string geneID, int amount)
     {
-        var character = GetChar(CharacterType.Defender, geneID);
+        for (int i = 0; i < amount; i++)
+        {
+            var character = GetChar(CharacterType.Defender, geneID);
+            characters.Add(character);
+        }
     }
     private Character GetChar(CharacterType type, string geneID)
     {
@@ -32,11 +40,11 @@ public class GenerateCharacter : MonoBehaviour
         switch (type)
         {
             case CharacterType.Attacker:
-                resultObject = Instantiate(attackerPrefab, this.transform.position, this.transform.rotation);
+                resultObject = Instantiate(attackerPrefab, transform);
                 resultObject.LoadSpine(geneID);
                 break;
             case CharacterType.Defender:
-                resultObject = Instantiate(defenderPrefab, this.transform.position, this.transform.rotation);
+                resultObject = Instantiate(defenderPrefab, transform);
                 resultObject.LoadSpine(geneID);
                 break;
             default:

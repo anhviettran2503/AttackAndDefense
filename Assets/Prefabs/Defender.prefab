@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2728684092287027518}
   - component: {fileID: 6837267004208680106}
+  - component: {fileID: 8546551881630203109}
+  - component: {fileID: 4396816108857196265}
   m_Layer: 0
   m_Name: Defender
   m_TagString: Untagged
@@ -31,7 +33,7 @@ Transform:
   m_Children:
   - {fileID: 4993318357982283267}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6837267004208680106
 MonoBehaviour:
@@ -45,12 +47,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e2e6aeec9b29774ab4bf2c97bf3fab8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  anim: {fileID: 8546551881630203109}
+  action: {fileID: 4396816108857196265}
   characterType: 1
   maxHp: 32
   axieId: 2724598
   currentHp: 0
   isCanMove: 0
+  positionX: 0
+  positionY: 0
+--- !u!114 &8546551881630203109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2743300608218872110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2777e699b5b02f4794d05bf8be6cdb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   characterAnim: {fileID: 7785660137600697548}
+--- !u!114 &4396816108857196265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2743300608218872110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45b175c2f04011242a573c5e5fd52058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8762620292370640003
 GameObject:
   m_ObjectHideFlags: 0
@@ -64,7 +94,7 @@ GameObject:
   - component: {fileID: 3629725067338977121}
   - component: {fileID: 7785660137600697548}
   m_Layer: 0
-  m_Name: New SkeletonAnimation
+  m_Name: Animation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

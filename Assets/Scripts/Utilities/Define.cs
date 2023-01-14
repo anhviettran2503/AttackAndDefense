@@ -18,3 +18,16 @@ public enum CharacterType
     Attacker,
     Defender,
 }
+public enum CharacterState
+{
+    Idle,
+    Move,
+    Attack,
+    Die
+}
+public class GameSpecs
+{
+    public static int AttackerAmount = 32;
+    public static int DefenderAmount = 16;
+    public static int CharTotal = AttackerAmount + DefenderAmount;
+}

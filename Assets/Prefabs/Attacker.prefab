@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4642300085617157208}
   - component: {fileID: 5003430986880761340}
   m_Layer: 0
-  m_Name: New SkeletonAnimation
+  m_Name: Animation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -131,6 +131,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6988444036424323385}
   - component: {fileID: 6185921152860103428}
+  - component: {fileID: 899886232901628203}
+  - component: {fileID: 1393506628138938334}
   m_Layer: 0
   m_Name: Attacker
   m_TagString: Untagged
@@ -152,7 +154,7 @@ Transform:
   m_Children:
   - {fileID: 2060606068589755804}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6185921152860103428
 MonoBehaviour:
@@ -166,9 +168,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e31f937f6f4f6247a22ac9f6a271c8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  anim: {fileID: 899886232901628203}
+  action: {fileID: 1393506628138938334}
   characterType: 0
   maxHp: 16
   axieId: 4191804
   currentHp: 0
-  isCanMove: 0
+  isCanMove: 1
+  positionX: 0
+  positionY: 0
+--- !u!114 &899886232901628203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7149431650504171817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2777e699b5b02f4794d05bf8be6cdb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   characterAnim: {fileID: 5003430986880761340}
+--- !u!114 &1393506628138938334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7149431650504171817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45b175c2f04011242a573c5e5fd52058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

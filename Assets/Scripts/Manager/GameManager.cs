@@ -6,11 +6,16 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    [SerializeField] private GenerateCharacter genChar; 
-    [SerializeField] private LoadSpine loadSpine; 
+    [SerializeField] private GenerateCharacter genChar;
+    [SerializeField] private LoadSpine loadSpine;
     [SerializeField] private CreateMap createMap;
-    private GameState gameState=GameState.None;
+    [SerializeField] private BattleSort battleHandler;
 
+
+
+    private GameState gameState = GameState.None;
+
+    public Cell[,] CellMap => createMap.Cells;
     private void Start()
     {
         StartCoroutine(Preparing());
@@ -20,14 +25,23 @@ public class GameManager : Singleton<GameManager>
         SetGameState(GameState.Waiting);
         createMap.Create();
         loadSpine.LoadGenes();
-        yield return new WaitUntil(() => (!string.IsNullOrEmpty(loadSpine.AttackerGenes) && !string.IsNullOrEmpty(loadSpine.DefenderGenes)));
-        genChar.GenAttackers(loadSpine.AttackerGenes);
-        genChar.GenDefenders(loadSpine.DefenderGenes);
+        yield return new WaitUntil(() => (!string.IsNullOrEmpty(loadSpine.AttackerGenes)
+        && !string.IsNullOrEmpty(loadSpine.DefenderGenes)));
+        genChar.GenAttackers(loadSpine.AttackerGenes, GameSpecs.AttackerAmount);
+        genChar.GenDefenders(loadSpine.DefenderGenes, GameSpecs.DefenderAmount);
+        yield return new WaitUntil(() => (genChar.Characters.Count >= GameSpecs.CharTotal));
+        battleHandler.PreparingBattle(createMap.Cells, genChar.Characters);
+        yield return new WaitForSecondsRealtime(2f);
+        StartGame();
+    }
+    private void StartGame()
+    {
+        GamePlayHandler.Instance.StartGame();
     }
     private void SetGameState(GameState state)
     {
         if (gameState == state) return;
-        gameState=state;
+        gameState = state;
     }
 
 }

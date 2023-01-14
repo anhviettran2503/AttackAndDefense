@@ -10,14 +10,14 @@ public class CreateMap : MonoBehaviour
     [SerializeField] private float cellSize;
     
     private Camera mainCamera;
-    private Cell[,] cells;
+    private Cell[,] tables;
     private Vector2 centerMap;
-    public Cell[,] Cells => cells;
+    public Cell[,] Tables => tables;
     public Vector2 Central => centerMap;
     public void Create()
     {
         Clear();
-        cells = new Cell[MapSizeWidth, MapSizeHeight];
+        tables = new Cell[MapSizeWidth, MapSizeHeight];
         for (int i = 0; i < MapSizeWidth; i++)
         {
             for (int j = 0; j < MapSizeHeight; j++)
@@ -26,22 +26,22 @@ public class CreateMap : MonoBehaviour
                 cell.transform.localScale = new Vector3(cellSize, cellSize, 1);
                 cell.transform.localPosition = new Vector3(i * cellSize, j * cellSize, 0);
                 cell.SetColorForBg(i, j);
-                cells[i, j] = cell;
+                tables[i, j] = cell;
             }
         }
         SetMainCameraPosition();
     }
     private void Clear()
     {
-        if (cells == null || cells.Length == 0) return;
+        if (tables == null || tables.Length == 0) return;
         for (int i = 0; i < MapSizeWidth; i++)
         {
             for (int j = 0; j < MapSizeHeight; j++)
             {
-                Destroy(cells[i, j].gameObject);
+                Destroy(tables[i, j].gameObject);
             }
         }
-        cells = null;
+        tables = null;
     }
     private void SetMainCameraPosition()
     {

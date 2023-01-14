@@ -25,9 +25,19 @@ public enum CharacterState
     Attack,
     Die
 }
+public enum AttackerAction
+{
+    Idle,
+    Left,
+    Right,
+    Up,
+    Down,
+}
 public class GameSpecs
 {
     public static int AttackerAmount = 32;
     public static int DefenderAmount = 16;
+    public static int SizeTableX = 22;
+    public static int SizeTableY = 22;
     public static int CharTotal = AttackerAmount + DefenderAmount;
 }

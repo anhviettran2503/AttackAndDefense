@@ -11,41 +11,15 @@ public class BattleSort : MonoBehaviour
     private Cell[,] cellMap;
 
     private int centerX, centerY;
-    public void PreparingBattle(Cell[,] _cellMap, List<Character> _characters)
+    public void PreparingBattle(Cell[,] _cellMap, List<Attacker> attackers, List<Defender> defenders)
     {
         cellMap = _cellMap;
         centerX = (int)(cellMap.GetLongLength(0) / 2);
         centerY = (int)(cellMap.GetLongLength(1) / 2);
-        List<Character> attackers = new List<Character>();
-        List<Character> defenders = new List<Character>();
-        _characters.ForEach(x =>
-        {
-            if (x.CanMove)
-            {
-                attackers.Add(x);
-            }
-            else
-            {
-                defenders.Add(x);
-            }
-        });
         AttackerSort(attackers);
         DefenderSort(defenders);
     }
-    private void DefenderSort(List<Character> defenders)
-    {
-        Vector4 block = new Vector4(centerX - 2, centerX + 2, centerY - 2, centerY + 2);
-        int charIndex = 0;
-        for (int i = (int)block.x; i < block.y; i++)
-        {
-            for (int j = (int)block.z; j < block.w; j++)
-            {
-                defenders[charIndex].SetPosition(cellMap[i, j], i, j);
-                charIndex += 1;
-            }
-        }
-    }
-    private void AttackerSort(List<Character> attackers)
+    private void AttackerSort(List<Attacker> attackers)
     {
 
         List<Vector4> blocks = new List<Vector4>();
@@ -64,10 +38,26 @@ public class BattleSort : MonoBehaviour
                 for (int j = (int)block.z; j < block.w; j++)
                 {
                     attackers[charIndex].SetPosition(cellMap[i, j], i, j);
+                    cellMap[i, j].Char = attackers[charIndex];
                     if (rotate) attackers[charIndex].Rotate();
                     charIndex += 1;
                 }
             }
         });
     }
+    private void DefenderSort(List<Defender> defenders)
+    {
+        Vector4 block = new Vector4(centerX - 2, centerX + 2, centerY - 2, centerY + 2);
+        int charIndex = 0;
+        for (int i = (int)block.x; i < block.y; i++)
+        {
+            for (int j = (int)block.z; j < block.w; j++)
+            {
+                defenders[charIndex].SetPosition(cellMap[i, j], i, j);
+                cellMap[i, j].Char=defenders[charIndex];
+                charIndex += 1;
+            }
+        }
+    }
+    
 }

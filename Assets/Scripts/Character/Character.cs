@@ -14,20 +14,22 @@ public abstract class Character : MonoBehaviour
     [SerializeField] protected string axieId;
     [SerializeField] protected int currentHp;
     [SerializeField] protected bool isCanMove;
-    [SerializeField] protected int positionX;
-    [SerializeField] protected int positionY;
+    [SerializeField] protected int posX;
+    [SerializeField] protected int posY;
     protected float attackDmg;
     protected float randomNum;
    
     public bool CanMove => isCanMove;
-    
+    public CharacterType Type => characterType;
+    public int PosX => posX;
+    public int PosY => posY;
     public void SetPosition(Cell cellPos, int _posX, int _posY)
     {
         transform.SetParent(cellPos.transform);
         transform.localPosition = Vector3.zero;
         transform.localScale = Vector3.one;
-        positionX = _posX;
-        positionY = _posY;
+        posX = _posX;
+        posY = _posY;
     }
     public void LoadSpine(string _geneID)
     {
@@ -39,7 +41,7 @@ public abstract class Character : MonoBehaviour
     }
     public void DoAction()
     {
-        action.DoAction(isCanMove, positionX, positionY);
+        action.DoAction(isCanMove, posX, posY);
     }
 
 }

@@ -10,12 +10,8 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private LoadSpine loadSpine;
     [SerializeField] private CreateMap createMap;
     [SerializeField] private BattleSort battleHandler;
-
-
-
     private GameState gameState = GameState.None;
-
-    public Cell[,] CellMap => createMap.Cells;
+    public GameState State => gameState;
     private void Start()
     {
         StartCoroutine(Preparing());
@@ -29,14 +25,14 @@ public class GameManager : Singleton<GameManager>
         && !string.IsNullOrEmpty(loadSpine.DefenderGenes)));
         genChar.GenAttackers(loadSpine.AttackerGenes, GameSpecs.AttackerAmount);
         genChar.GenDefenders(loadSpine.DefenderGenes, GameSpecs.DefenderAmount);
-        yield return new WaitUntil(() => (genChar.Characters.Count >= GameSpecs.CharTotal));
-        battleHandler.PreparingBattle(createMap.Cells, genChar.Characters);
+        yield return new WaitUntil(() => ((genChar.Attackers.Count+ genChar.Defenders.Count) >= GameSpecs.CharTotal));
+        battleHandler.PreparingBattle(createMap.Tables, genChar.Attackers, genChar.Defenders);
         yield return new WaitForSecondsRealtime(2f);
         StartGame();
     }
     private void StartGame()
     {
-        GamePlayHandler.Instance.StartGame();
+        GamePlayHandler.Instance.StartGame(createMap.Tables, genChar.Attackers, genChar.Defenders);
     }
     private void SetGameState(GameState state)
     {

@@ -8,30 +8,35 @@ using Game;
 using Newtonsoft.Json.Linq;
 using UnityEngine.Networking;
 using System;
-public class LoadCharacterSpine : MonoBehaviour
+using System.Threading.Tasks;
+public class LoadSpine : MonoBehaviour
 {
     [SerializeField] private string attackerID;
     [SerializeField] private string defenderID;
-    private string attackerGenesID;
-    private string defenderGenesID;
-    
+
+    [SerializeField] private string attackerGenesID;
+    [SerializeField] private string defenderGenesID;
+
+    public string AttackerGenes => attackerGenesID;
+    public string DefenderGenes => defenderGenesID;
     private void Start()
     {
         Mixer.Init();
-        GetBothGenes();
+        attackerGenesID = "";
+        defenderGenesID = "";
     }
-    private void GetBothGenes()
+    public void LoadGenes()
     {
         StartCoroutine(GetAxiesGenes(attackerID, x =>
         {
             attackerGenesID = x;
-        })) ;
+        }));
         StartCoroutine(GetAxiesGenes(defenderID, x =>
         {
-            defenderID = x;
+            defenderGenesID = x;
         }));
     }
-    private IEnumerator GetAxiesGenes(string axieId,Action<string> callback)
+    private IEnumerator GetAxiesGenes(string axieId, Action<string> callback)
     {
         string searchString = "{ axie (axieId: \"" + axieId + "\") { id, genes, newGenes}}";
         JObject jPayload = new JObject();

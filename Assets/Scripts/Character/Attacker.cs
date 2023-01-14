@@ -6,9 +6,5 @@ using UnityEngine;
 
 public class Attacker : Character
 {
-    protected override void LoadCharacter()
-    {
-        base.LoadCharacter();
-        //Mixer.SpawnSkeletonAnimation(characterAnim, axieId, genesStrting);
-    }
+   
 }

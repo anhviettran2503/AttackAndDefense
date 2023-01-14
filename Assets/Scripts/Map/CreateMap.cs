@@ -11,10 +11,9 @@ public class CreateMap : MonoBehaviour
     [SerializeField] private float cellSize;
 
     private List<Cell> cells;
-    [Button]
-    private void GenerateMap()
+    public void Create()
     {
-        ClearMap();
+        Clear();
         cells = new List<Cell>();
         var halfWidth = mapSize.x / 2;
         var halfHeight = mapSize.y / 2;
@@ -32,8 +31,7 @@ public class CreateMap : MonoBehaviour
             }
         }
     }
-    [Button]
-    private void ClearMap()
+    private void Clear()
     {
         if (cells == null || cells.Count == 0) return;
         cells.ForEach(x =>
@@ -41,5 +39,9 @@ public class CreateMap : MonoBehaviour
             Destroy(x.gameObject);
         });
         cells = null;
+    }
+    private void OnDestroy()
+    {
+        Clear();
     }
 }

@@ -1,88 +1,105 @@
 using AxieMixer.Unity;
 using NaughtyAttributes;
 using Spine.Unity;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class Attacker : Character
 {
-    private Vector2 centerPoint;
+    protected Queue<Character> enemies;
     [SerializeField] private Defender target;
-    [SerializeField] private AttackerAction direction;
+    [SerializeField] private AttackerAction attackerAction;
     [SerializeField] private Vector2 predictPos;
+    [SerializeField] private int minDistance;
+    public AttackerAction AttackerAction { set => attackerAction = value; get => attackerAction; }
+    public Defender Target => target;
     private void Start()
     {
         maxHp = 16;
         currentHp = maxHp;
-        centerPoint = Vector2.zero;
     }
     [Button]
     public void Action()
     {
         if (target == null) SetTarget();
-        ChoiceDirection();
-        if (direction != AttackerAction.Idle)
-        {
-            GamePlayHandler.Instance.UpdateAttackerPosition(this, new Vector2(posX, posY), predictPos);
-        }
+        UpdateDistance();
+        attackerAction=CheckDirection();
+        if (attackerAction == AttackerAction.Idle || attackerAction == AttackerAction.WantToAttack) return;
+        GamePlayHandler.Instance.UpdateAttackerPosition(this, new Vector2(posX, posY), predictPos);
     }
     [Button]
     private void SetTarget()
     {
         var defenders = GamePlayHandler.Instance.Denfenders;
-        int minDistance = GameSpecs.SizeTableX * GameSpecs.SizeTableY;
+        minDistance = GameSpecs.SizeTableX * GameSpecs.SizeTableY;
         defenders.ForEach(x =>
         {
             if ((Mathf.Abs(x.PosX - posX) + Mathf.Abs(x.PosY - posY)) < minDistance)
             {
-                minDistance = (Mathf.Abs(x.PosX - posX) + Mathf.Abs(x.PosY - posY));
                 target = x;
+                UpdateDistance();
             }
         });
     }
-    private void ChoiceDirection()
+    private void UpdateDistance()
     {
-        var targetX = target.PosX;
-        var targetY = target.PosY;
-        predictPos.x = posX;
-        predictPos.y = posY;
-        if (posX==targetX)
+        if (target == null) return;
+        minDistance = Distance(target.PosX, target.PosY, posX, PosY);
+    }
+
+    private AttackerAction CheckDirection()
+    {
+        Dictionary<AttackerAction, int> direction = new Dictionary<AttackerAction, int>();
+        AttackerAction bestDirection;
+        direction[AttackerAction.MoveLeft] = Distance(posX - 1, posY, target.PosX, target.PosY);
+        direction[AttackerAction.MoveRight] = Distance(posX + 1, posY, target.PosX, target.PosY);
+        direction[AttackerAction.MoveUp] = Distance(posX, posY + 1, target.PosX, target.PosY);
+        direction[AttackerAction.MoveDown] = Distance(posX, posY - 1, target.PosX, target.PosY);
+        var best = direction.OrderBy(r => r.Value).Take(1);
+
+        Debug.Log("Best choice=" + best.ElementAt(0).Key + " " + best.ElementAt(0).Value);
+        var predictDirection = new Vector2(posX, PosY);
+        bestDirection = best.ElementAt(0).Key;
+        switch (best.ElementAt(0).Key)
         {
-            if(posY<targetY)
-            {
-                predictPos.y = posY + 1;
-                direction = AttackerAction.Up;
-            }
-            else
-            {
-                predictPos.y = posY - 1;
-                direction = AttackerAction.Down;
-            }
-            if(GamePlayHandler.Instance.Table[(int)predictPos.x, (int)predictPos.y].Char!=null)
-            {
-                direction = AttackerAction.Idle;
-            }
-            return;
+            case AttackerAction.MoveLeft:
+                predictDirection.x -= 1;
+                break;
+            case AttackerAction.MoveRight:
+                predictDirection.x += 1;
+                break;
+            case AttackerAction.MoveUp:
+                predictDirection.y += 1;
+                break;
+            case AttackerAction.MoveDown:
+                predictDirection.y -= 1;
+                break;
+            default:
+                break;
         }
-        if(posY==targetY)
+        var character = GamePlayHandler.Instance.Table[(int)predictDirection.x, (int)predictDirection.y].Char;
+        if (character != null)
         {
-            if (posX < targetX)
+            switch (character.Type)
             {
-                predictPos.x = posX + 1;
-                direction = AttackerAction.Right;
+                case CharacterType.Attacker:
+                    return AttackerAction.Idle;
+                case CharacterType.Defender:
+                    return AttackerAction.WantToAttack;
+                default:
+                    break;
             }
-            else
-            {
-                predictPos.x = posX - 1;
-                direction = AttackerAction.Left;
-            }
-            if (GamePlayHandler.Instance.Table[(int)predictPos.x, (int)predictPos.y].Char != null)
-            {
-                direction = AttackerAction.Idle;
-            }
-            return;
         }
+        predictPos = predictDirection;
+        return bestDirection;
+    }
+    private int Distance(int beginX, int beginY, int endX, int endY)
+    {
+        return (int)(Mathf.Abs(beginX - endX) + Mathf.Abs(beginY - endY));
     }
     private void OnDestroy()
     {

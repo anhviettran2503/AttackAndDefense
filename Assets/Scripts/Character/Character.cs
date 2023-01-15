@@ -16,13 +16,13 @@ public abstract class Character : MonoBehaviour
     [SerializeField] protected bool isCanMove;
     [SerializeField] protected int posX;
     [SerializeField] protected int posY;
-    protected float attackDmg;
-    protected float randomNum;
-   
     public bool CanMove => isCanMove;
     public CharacterType Type => characterType;
-    public int PosX => posX;
-    public int PosY => posY;
+    public int PosX { set => posX = value; get => posX; }
+    public int PosY { set => posY = value; get => posY; }
+    public bool IsDead => currentHp <= 0;
+    public int HP => currentHp;
+    
     public void SetPosition(Cell cellPos, int _posX, int _posY)
     {
         transform.SetParent(cellPos.transform);
@@ -39,9 +39,13 @@ public abstract class Character : MonoBehaviour
     {
         anim.Rotate();
     }
-    public void DoAction()
+    public int RandomNumber()
     {
-        action.DoAction(isCanMove, posX, posY);
+        return Random.Range(0, 3);
     }
-
+    public void TakeDmg(int _dmg)
+    {
+        currentHp -= _dmg;
+    }
 }
+

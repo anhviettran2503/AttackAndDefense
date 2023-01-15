@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class Defender : Character
 {
+    public DefenderAction DefenderAction { get; set; }  
     private void Start()
     {
         maxHp = 32;
         currentHp = maxHp;
     }
+
 }

@@ -30,12 +30,12 @@ public class Attacker : Character
         UpdateDistance();
         attackerAction = CheckDirection();
         if (attackerAction == AttackerAction.Idle || attackerAction == AttackerAction.WantToAttack) return;
-        GamePlayHandler.Instance.Battle.UpdateAttackerPosition(this, new Vector2(posX, posY), predictPos);
+        GameManager.Instance.Battle.UpdateAttackerPosition(this, new Vector2(posX, posY), predictPos);
     }
     [Button]
     private void SetTarget()
     {
-        var defenders = GamePlayHandler.Instance.Battle.Denfenders;
+        var defenders = GameManager.Instance.Battle.Denfenders;
         minDistance = GameSpecs.SizeTableX * GameSpecs.SizeTableY;
         defenders.ForEach(x =>
         {
@@ -82,7 +82,7 @@ public class Attacker : Character
             default:
                 break;
         }
-        var character = GamePlayHandler.Instance.Battle.Table[(int)predictDirection.x, (int)predictDirection.y].Char;
+        var character = GameManager.Instance.Battle.Table[(int)predictDirection.x, (int)predictDirection.y].Char;
         if (character != null)
         {
             switch (character.Type)

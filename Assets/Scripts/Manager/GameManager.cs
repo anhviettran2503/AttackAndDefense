@@ -9,16 +9,18 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private GenerateCharacter genChar;
     [SerializeField] private LoadSpine loadSpine;
     [SerializeField] private CreateMap createMap;
-    [SerializeField] private BattleSort battleHandler;
+    [SerializeField] private BattleSort battleSort;
+    [SerializeField] private BattleHandler battleHandler;
+    public BattleHandler Battle => battleHandler;
     private GameState gameState = GameState.None;
     public GameState State => gameState;
+    [SerializeField] private float battleDuration = 1f;
     private void Start()
     {
         StartCoroutine(Preparing());
     }
     private IEnumerator Preparing()
     {
-        SetGameState(GameState.Waiting);
         createMap.Create();
         loadSpine.LoadGenes();
         yield return new WaitUntil(() => (!string.IsNullOrEmpty(loadSpine.AttackerGenes)
@@ -26,18 +28,12 @@ public class GameManager : Singleton<GameManager>
         genChar.GenAttackers(loadSpine.AttackerGenes, GameSpecs.AttackerAmount);
         genChar.GenDefenders(loadSpine.DefenderGenes, GameSpecs.DefenderAmount);
         yield return new WaitUntil(() => ((genChar.Attackers.Count+ genChar.Defenders.Count) >= GameSpecs.CharTotal));
-        battleHandler.PreparingBattle(createMap.Tables, genChar.Attackers, genChar.Defenders);
-        yield return new WaitForSecondsRealtime(2f);
-        StartGame();
+        battleSort.PreparingBattle(createMap.Tables, genChar.Attackers, genChar.Defenders);
+        yield return new WaitForSecondsRealtime(1f);
+        StartGame(createMap.Tables, genChar.Attackers, genChar.Defenders);
     }
-    private void StartGame()
+    public void StartGame(Cell[,] _table, List<Attacker> _attackers, List<Defender> _defenders)
     {
-        GamePlayHandler.Instance.StartGame(createMap.Tables, genChar.Attackers, genChar.Defenders);
+        battleHandler.StartGame(_table, _attackers, _defenders);
     }
-    private void SetGameState(GameState state)
-    {
-        if (gameState == state) return;
-        gameState = state;
-    }
-
 }

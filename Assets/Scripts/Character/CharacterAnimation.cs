@@ -36,10 +36,7 @@ public class CharacterAnimation : MonoBehaviour
     {
         characterAnim.skeleton.ScaleX = -charSize.x;
     }
-    public void Idle()
-    {
-        characterAnim.state.SetAnimation(0, "action/idle/normal", true);
-    }
+    
     public void SetHealthBar(int _updateHP)
     {
         if (healthBar == null) return;
@@ -48,5 +45,17 @@ public class CharacterAnimation : MonoBehaviour
         var endValue = (_updateHP * healthBarFactor) / maxHP;
         healthBar.transform.DOScaleX(endValue, 0.5f);
         currentHP = _updateHP;
+    }
+    public void Idle()
+    {
+        characterAnim.state.SetAnimation(0, GameManager.Instance.Spine.RandomIdle(), true);
+    }
+    public void Run()
+    {
+        characterAnim.state.SetAnimation(0, GameManager.Instance.Spine.RandomRun(), false);
+    }
+    public void Attack()
+    {
+        characterAnim.state.SetAnimation(0, GameManager.Instance.Spine.RandomAttack(), false);
     }
 }

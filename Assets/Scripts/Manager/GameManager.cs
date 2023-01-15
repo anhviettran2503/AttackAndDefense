@@ -12,6 +12,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private BattleSort battleSort;
     [SerializeField] private BattleHandler battleHandler;
     public BattleHandler Battle => battleHandler;
+    public LoadSpine Spine => loadSpine;
     private GameState gameState = GameState.None;
     public GameState State => gameState;
     [SerializeField] private float battleDuration = 1f;

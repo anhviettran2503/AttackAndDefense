@@ -29,7 +29,12 @@ public class Attacker : Character
         if (target == null) return;
         UpdateDistance();
         attackerAction = CheckDirection();
-        if (attackerAction == AttackerAction.Idle || attackerAction == AttackerAction.WantToAttack) return;
+        if (attackerAction == AttackerAction.Idle || attackerAction == AttackerAction.WantToAttack)
+        {
+            anim.Idle();
+            return;
+        }
+        anim.Run();
         GameManager.Instance.Battle.UpdateAttackerPosition(this, new Vector2(posX, posY), predictPos);
     }
     [Button]

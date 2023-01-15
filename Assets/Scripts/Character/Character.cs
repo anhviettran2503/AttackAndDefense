@@ -48,6 +48,7 @@ public abstract class Character : MonoBehaviour
         currentHp -= _dmg;
         currentHp = Mathf.Max(0, currentHp);
         anim.SetHealthBar(currentHp);
+        anim.Attack();
     }
 }
 

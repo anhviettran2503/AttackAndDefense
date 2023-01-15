@@ -26,15 +26,16 @@ public class Attacker : Character
     public void Action()
     {
         if (target == null) SetTarget();
+        if (target == null) return;
         UpdateDistance();
-        attackerAction=CheckDirection();
+        attackerAction = CheckDirection();
         if (attackerAction == AttackerAction.Idle || attackerAction == AttackerAction.WantToAttack) return;
-        GamePlayHandler.Instance.UpdateAttackerPosition(this, new Vector2(posX, posY), predictPos);
+        GamePlayHandler.Instance.Battle.UpdateAttackerPosition(this, new Vector2(posX, posY), predictPos);
     }
     [Button]
     private void SetTarget()
     {
-        var defenders = GamePlayHandler.Instance.Denfenders;
+        var defenders = GamePlayHandler.Instance.Battle.Denfenders;
         minDistance = GameSpecs.SizeTableX * GameSpecs.SizeTableY;
         defenders.ForEach(x =>
         {
@@ -61,7 +62,7 @@ public class Attacker : Character
         direction[AttackerAction.MoveDown] = Distance(posX, posY - 1, target.PosX, target.PosY);
         var best = direction.OrderBy(r => r.Value).Take(1);
 
-        Debug.Log("Best choice=" + best.ElementAt(0).Key + " " + best.ElementAt(0).Value);
+        //Debug.Log("Best choice=" + best.ElementAt(0).Key + " " + best.ElementAt(0).Value);
         var predictDirection = new Vector2(posX, PosY);
         bestDirection = best.ElementAt(0).Key;
         switch (best.ElementAt(0).Key)
@@ -81,7 +82,7 @@ public class Attacker : Character
             default:
                 break;
         }
-        var character = GamePlayHandler.Instance.Table[(int)predictDirection.x, (int)predictDirection.y].Char;
+        var character = GamePlayHandler.Instance.Battle.Table[(int)predictDirection.x, (int)predictDirection.y].Char;
         if (character != null)
         {
             switch (character.Type)

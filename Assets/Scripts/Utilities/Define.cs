@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
+[System.Serializable]
 public enum GameState
 {
     None,
@@ -14,12 +14,13 @@ public enum GameState
     Stop,
     ReMatch,
 }
+[System.Serializable]
 public enum CharacterType
 {
     Attacker,
     Defender,
 }
-
+[System.Serializable]
 public enum AttackerAction
 {
     Idle,
@@ -30,6 +31,7 @@ public enum AttackerAction
     MoveUp,
     MoveDown,
 }
+[System.Serializable]
 public enum DefenderAction
 {
     Idle,
@@ -39,9 +41,7 @@ public enum DefenderAction
 public enum LittleBattleState
 {
     Fighting,
-    AttackerWin,
-    DefenderWin,
-    BothDead,
+    End,
 }
 public class GameSpecs
 {
@@ -61,7 +61,7 @@ public class LitteBattle
     public int defenderHP;
     public void Fighting()
     {
-        if (LittleBattleState != LittleBattleState.Fighting) return;
+        if (LittleBattleState == LittleBattleState.End) return;
         var attackerNum = Attacker.RandomNumber();
         var targetNum = Defender.RandomNumber();
         var dmgDeal = 0;
@@ -82,19 +82,11 @@ public class LitteBattle
         Defender.TakeDmg(dmgDeal);
         attackerHP = Attacker.HP;
         defenderHP = Defender.HP;
-        if (Attacker.IsDead || Defender.IsDead)
+        if(Attacker.IsDead || Defender.IsDead)
         {
-            if (Attacker.IsDead && Defender.IsDead) LittleBattleState = LittleBattleState.BothDead;
-            else
-                if (Attacker.IsDead)
-            {
-                LittleBattleState = LittleBattleState.DefenderWin;
-            }
-            else
-                 if (Defender.IsDead)
-            {
-                LittleBattleState = LittleBattleState.AttackerWin;
-            }
+            LittleBattleState = LittleBattleState.End;
+            Attacker.AttackerAction = AttackerAction.Idle;
+            Defender.DefenderAction = DefenderAction.Idle;
         }
     }
 }

@@ -1,9 +1,7 @@
-using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class BattleHandler : MonoBehaviour
 {
@@ -12,10 +10,15 @@ public class BattleHandler : MonoBehaviour
     private List<Attacker> attackers;
     private List<Defender> defenders;
     [SerializeField] private float battleDuration = 1f;
-    [SerializeField] private int battleTime;
+    [SerializeField] private int battleTurn;
+    private Vector2 timeDurationClamp = new Vector2(0.5f, 4f);
     private float tempTime;
     public List<Defender> Denfenders => defenders;
     public Cell[,] Table => tables;
+    public UnityAction<int> SetTurn;
+    public UnityAction<int> SetAttackerPower;
+    public UnityAction<int> SetDefenderPower;
+    public UnityAction<float> SetDuration;
     private void Start()
     {
         Load();
@@ -33,8 +36,8 @@ public class BattleHandler : MonoBehaviour
         if (tempTime >= battleDuration)
         {
             tempTime = 0;
-            battleTime += 1;
-            GameManager.Instance.UIManager.SetTimeText(battleTime);
+            battleTurn += 1;
+            SetTurn?.Invoke(battleTurn);
             Action();
         }
     }
@@ -45,6 +48,25 @@ public class BattleHandler : MonoBehaviour
         defenders = _defenders;
         UpdatePower();
     }
+    public void UpdateAttackerPosition(Attacker _attacker, Vector2 _currentPos, Vector2 _nextPos)
+    {
+        if (_attacker == null) return;
+        var character = tables[(int)_currentPos.x, (int)_currentPos.y].Char;
+        if (_attacker == character)
+        {
+            _attacker.SetPosition(tables[(int)_nextPos.x, (int)_nextPos.y], (int)_nextPos.x, (int)_nextPos.y);
+            StartCoroutine(ClearCharInCell(_currentPos));
+        }
+    }
+    public void ChangeDuration(bool inc)
+    {
+        var value = 0.5f;
+        if (!inc) value = -0.5f;
+        battleDuration += value;
+        battleDuration = Mathf.Clamp(battleDuration, timeDurationClamp.x, timeDurationClamp.y);
+        SetDuration?.Invoke(battleDuration);
+    }
+
     private void Action()
     {
         if (attackers.Count == 0 || defenders.Count == 0)
@@ -115,8 +137,8 @@ public class BattleHandler : MonoBehaviour
         {
             defenderPower += x.HP;
         });
-        GameManager.Instance.UIManager.SetAttackerPower(attackerPower);
-        GameManager.Instance.UIManager.SetDefenderPower(defenderPower);
+        SetAttackerPower?.Invoke(attackerPower);
+        SetDefenderPower?.Invoke(defenderPower);
     }
     private void RemoveDefender(Defender _defender)
     {
@@ -133,17 +155,6 @@ public class BattleHandler : MonoBehaviour
         Destroy(_attacker.gameObject);
         tables[_attacker.PosX, _attacker.PosY].Char = null;
     }
-
-    public void UpdateAttackerPosition(Attacker _attacker, Vector2 _currentPos, Vector2 _nextPos)
-    {
-        if (_attacker == null) return;
-        var character = tables[(int)_currentPos.x, (int)_currentPos.y].Char;
-        if (_attacker == character)
-        {
-            _attacker.SetPosition(tables[(int)_nextPos.x, (int)_nextPos.y], (int)_nextPos.x, (int)_nextPos.y);
-            StartCoroutine(ClearCharInCell(_currentPos));
-        }
-    }
     private void CreateNewLittleBattle(Attacker _attacker, Defender _defender)
     {
         var battle = new LitteBattle();
@@ -153,9 +164,11 @@ public class BattleHandler : MonoBehaviour
         _attacker.AttackerAction = AttackerAction.Attacking;
         litteBattles.Add(battle);
     }
-    public IEnumerator ClearCharInCell(Vector2 _currentPos)
+    private IEnumerator ClearCharInCell(Vector2 _currentPos)
     {
         yield return new WaitForFixedUpdate();
         tables[(int)_currentPos.x, (int)_currentPos.y].Char = null;
     }
+
+
 }

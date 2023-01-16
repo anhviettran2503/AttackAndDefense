@@ -5,14 +5,10 @@ using UnityEngine;
 [System.Serializable]
 public enum GameState
 {
-    None,
-    Waiting,
-    Start,
+    Preparing,
     Play,
-    AttackWin,
-    DefenderWin,
+    Pause,
     Stop,
-    ReMatch,
 }
 [System.Serializable]
 public enum CharacterType

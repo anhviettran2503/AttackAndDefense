@@ -7,39 +7,67 @@ using UnityEngine;
 
 public class BattleHandler : MonoBehaviour
 {
-    [SerializeField] private List<LitteBattle> litteBattles;
-    [SerializeField] private Cell[,] tables;
-    [SerializeField] private List<Attacker> attackers;
-    [SerializeField] private List<Defender> defenders;
+    private List<LitteBattle> litteBattles;
+    private Cell[,] tables;
+    private List<Attacker> attackers;
+    private List<Defender> defenders;
+    [SerializeField] private float battleDuration = 1f;
+    [SerializeField] private int battleTime;
+    private float tempTime;
     public List<Defender> Denfenders => defenders;
     public Cell[,] Table => tables;
     private void Start()
     {
+        Load();
+    }
+    private void Load()
+    {
         litteBattles = new List<LitteBattle>();
-
+        tempTime = 0;
+    }
+    private void FixedUpdate()
+    {
+        if (GameManager.Instance.State == GameState.Pause) tempTime = 0;
+        if (GameManager.Instance.State != GameState.Play) return;
+        tempTime += Time.fixedDeltaTime;
+        if (tempTime >= battleDuration)
+        {
+            tempTime = 0;
+            battleTime += 1;
+            GameManager.Instance.UIManager.SetTimeText(battleTime);
+            Action();
+        }
     }
     public void StartGame(Cell[,] _table, List<Attacker> _attackers, List<Defender> _defenders)
     {
         tables = _table;
         attackers = _attackers;
         defenders = _defenders;
+        UpdatePower();
     }
-    [Button]
-    public void Action()
+    private void Action()
     {
-        if (attackers.Count == 0 || defenders.Count==0) return;
-        attackers.ForEach(x =>
+        if (attackers.Count == 0 || defenders.Count == 0)
         {
-            x.Action();
-        });
+            GameManager.Instance.EndGame();
+            return;
+        };
+        AttackMove();
         Fighting();
-
     }
-    public void Fighting()
+    private void Fighting()
     {
         SetCharacterReadyForFighting();
         LittleBattleFighting();
         DropBattleEnd();
+        UpdatePower();
+    }
+    private void AttackMove()
+    {
+        attackers.ForEach(x =>
+        {
+            x.Action();
+        });
     }
     private void SetCharacterReadyForFighting()
     {
@@ -75,6 +103,21 @@ public class BattleHandler : MonoBehaviour
             }
         };
     }
+    private void UpdatePower()
+    {
+        var attackerPower = 0;
+        var defenderPower = 0;
+        attackers.ForEach(x =>
+        {
+            attackerPower += x.HP;
+        });
+        defenders.ForEach(x =>
+        {
+            defenderPower += x.HP;
+        });
+        GameManager.Instance.UIManager.SetAttackerPower(attackerPower);
+        GameManager.Instance.UIManager.SetDefenderPower(defenderPower);
+    }
     private void RemoveDefender(Defender _defender)
     {
         if (_defender == null || _defender.HP > 0) return;
@@ -109,16 +152,6 @@ public class BattleHandler : MonoBehaviour
         _defender.DefenderAction = DefenderAction.Attacking;
         _attacker.AttackerAction = AttackerAction.Attacking;
         litteBattles.Add(battle);
-    }
-    [Button]
-    private void ClearAttackerList()
-    {
-        attackers = attackers.Where(item => item != null).ToList();
-    }
-    [Button]
-    private void ClearDefenderList()
-    {
-        defenders = defenders.Where(item => item != null).ToList();
     }
     public IEnumerator ClearCharInCell(Vector2 _currentPos)
     {

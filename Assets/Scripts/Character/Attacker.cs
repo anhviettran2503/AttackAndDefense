@@ -10,7 +10,6 @@ using static UnityEngine.GraphicsBuffer;
 
 public class Attacker : Character
 {
-    protected Queue<Character> enemies;
     [SerializeField] private Defender target;
     [SerializeField] private AttackerAction attackerAction;
     [SerializeField] private Vector2 predictPos;
@@ -25,7 +24,7 @@ public class Attacker : Character
     [Button]
     public void Action()
     {
-        if (target == null) SetTarget();
+        if (target == null || target.IsDead) SetTarget();
         if (target == null) return;
         UpdateDistance();
         attackerAction = CheckDirection();
@@ -36,6 +35,13 @@ public class Attacker : Character
         }
         anim.Run();
         GameManager.Instance.Battle.UpdateAttackerPosition(this, new Vector2(posX, posY), predictPos);
+    }
+    public override void CharacterDead()
+    {
+        base.CharacterDead();
+        target = null;
+        minDistance = 0;
+        predictPos = Vector2.zero;
     }
     [Button]
     private void SetTarget()
@@ -56,7 +62,6 @@ public class Attacker : Character
         if (target == null) return;
         minDistance = Distance(target.PosX, target.PosY, posX, PosY);
     }
-
     private AttackerAction CheckDirection()
     {
         Dictionary<AttackerAction, int> direction = new Dictionary<AttackerAction, int>();

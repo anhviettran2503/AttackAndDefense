@@ -17,6 +17,13 @@ public class PlayGameUI : Panel
         GameManager.Instance.Battle.SetDefenderPower += SetDefenderPower;
         GameManager.Instance.Battle.SetDuration += SetDuration;
     }
+    public override void EnableContent()
+    {
+        base.EnableContent();
+        turnText.text = "0";
+        attackPowerText.text = "Attacker:";
+        defenderPowerText.text = "Defender:";
+    }
     public void SetTurnText(int _turn)
     {
         turnText.text = _turn.ToString();

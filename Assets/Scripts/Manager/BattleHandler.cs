@@ -1,14 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Events;
-
+using NaughtyAttributes;
 public class BattleHandler : MonoBehaviour
 {
     private List<LitteBattle> litteBattles;
     private Cell[,] tables;
-    private List<Attacker> attackers;
-    private List<Defender> defenders;
+    [SerializeField] private List<Attacker> attackers;
+    [SerializeField] private List<Defender> defenders;
     [SerializeField] private float battleDuration = 1f;
     [SerializeField] private int battleTurn;
     private Vector2 timeDurationClamp = new Vector2(0.5f, 4f);
@@ -44,8 +45,17 @@ public class BattleHandler : MonoBehaviour
     public void StartGame(Cell[,] _table, List<Attacker> _attackers, List<Defender> _defenders)
     {
         tables = _table;
-        attackers = _attackers;
-        defenders = _defenders;
+        attackers = new List<Attacker>();
+        defenders = new List<Defender>();
+        battleTurn = 0;
+        _attackers.ForEach(x =>
+        {
+            attackers.Add(x);
+        });
+        _defenders.ForEach(x =>
+        {
+            defenders.Add(x);
+        });
         UpdatePower();
     }
     public void UpdateAttackerPosition(Attacker _attacker, Vector2 _currentPos, Vector2 _nextPos)
@@ -71,6 +81,7 @@ public class BattleHandler : MonoBehaviour
     {
         if (attackers.Count == 0 || defenders.Count == 0)
         {
+            RemoveAllCharacter();
             GameManager.Instance.EndGame();
             return;
         };
@@ -119,8 +130,8 @@ public class BattleHandler : MonoBehaviour
         {
             if (litteBattles[i].LittleBattleState == LittleBattleState.End)
             {
-                RemoveDefender(litteBattles[i].Defender);
-                RemoveAttacker(litteBattles[i].Attacker);
+                RemoveDefender(litteBattles[i].Defender, false);
+                RemoveAttacker(litteBattles[i].Attacker, false);
                 litteBattles.Remove(litteBattles[i]);
             }
         };
@@ -140,19 +151,31 @@ public class BattleHandler : MonoBehaviour
         SetAttackerPower?.Invoke(attackerPower);
         SetDefenderPower?.Invoke(defenderPower);
     }
-    private void RemoveDefender(Defender _defender)
+    [Button]
+    private void RemoveAllCharacter()
     {
-        if (_defender == null || _defender.HP > 0) return;
+        for (int i = attackers.Count - 1; i >= 0; i--)
+        {
+            RemoveAttacker(attackers[i], true);
+        }
+        for (int i = defenders.Count - 1; i >= 0; i--)
+        {
+            RemoveDefender(defenders[i], true);
+        }
+    }
+    private void RemoveDefender(Defender _defender, bool isOver)
+    {
+        if (!isOver && (_defender == null || _defender.HP > 0)) return;
         defenders.Remove(_defender);
-        Destroy(_defender.gameObject);
+        GameManager.Instance.Pool.CharDead(_defender);
         tables[_defender.PosX, _defender.PosY].Char = null;
 
     }
-    private void RemoveAttacker(Attacker _attacker)
+    private void RemoveAttacker(Attacker _attacker, bool isOver)
     {
-        if (_attacker == null || _attacker.HP > 0) return;
+        if (!isOver && (_attacker == null || _attacker.HP > 0)) return;
         attackers.Remove(_attacker);
-        Destroy(_attacker.gameObject);
+        GameManager.Instance.Pool.CharDead(_attacker);
         tables[_attacker.PosX, _attacker.PosY].Char = null;
     }
     private void CreateNewLittleBattle(Attacker _attacker, Defender _defender)

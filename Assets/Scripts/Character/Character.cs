@@ -6,12 +6,13 @@ using UnityEngine;
 
 public abstract class Character : MonoBehaviour
 {
+    [SerializeField] protected GameObject Obj;
     [SerializeField] protected CharacterAnimation anim;
     [SerializeField] protected CharacterAction action;
 
     [SerializeField] protected CharacterType characterType;
     [SerializeField] protected string axieId;
-
+    public CharacterAnimation Anim => anim;
     protected int maxHp;
     protected int currentHp;
     protected int posX;
@@ -22,6 +23,10 @@ public abstract class Character : MonoBehaviour
     public bool IsDead => currentHp <= 0;
     public int HP => currentHp;
 
+    public void ResetHP()
+    {
+        currentHp = maxHp;
+    }
     public void SetPosition(Cell cellPos, int _posX, int _posY)
     {
         cellPos.Char = this;
@@ -49,6 +54,17 @@ public abstract class Character : MonoBehaviour
         currentHp = Mathf.Max(0, currentHp);
         anim.SetHealthBar(currentHp);
         anim.Attack();
+    }
+    public virtual void CharacterDead()
+    {
+        currentHp = 0;
+        Obj.SetActive(false);
+    }
+    public virtual void CharacterAlive()
+    {
+        currentHp=maxHp;
+        Obj.SetActive(true);
+        anim.SetHealthBar(currentHp);
     }
 }
 

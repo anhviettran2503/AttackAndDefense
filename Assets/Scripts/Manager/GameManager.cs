@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    [SerializeField] private GenerateCharacter genChar;
+    [SerializeField] private CharacterPool characterPool;
     [SerializeField] private LoadSpine loadSpine;
     [SerializeField] private CreateMap createMap;
     [SerializeField] private BattleSort battleSort;
@@ -18,9 +18,9 @@ public class GameManager : Singleton<GameManager>
     public LoadSpine Spine => loadSpine;
     public GameState State => gameState;
     public UIManager UIManager => uiManager;
+    public CharacterPool Pool => characterPool;
     private void Start()
     {
-
         StartCoroutine(Preparing());
     }
     private IEnumerator Preparing()
@@ -31,12 +31,16 @@ public class GameManager : Singleton<GameManager>
         loadSpine.LoadGenes();
         yield return new WaitUntil(() => (!string.IsNullOrEmpty(loadSpine.AttackerGenes)
         && !string.IsNullOrEmpty(loadSpine.DefenderGenes)));
-        genChar.GenAttackers(loadSpine.AttackerGenes, GameSpecs.AttackerAmount);
-        genChar.GenDefenders(loadSpine.DefenderGenes, GameSpecs.DefenderAmount);
-        yield return new WaitUntil(() => ((genChar.Attackers.Count + genChar.Defenders.Count) >= GameSpecs.CharTotal));
-        battleSort.PreparingBattle(createMap.Tables, genChar.Attackers, genChar.Defenders);
+        StartCoroutine(NewGame());
+    }
+    private IEnumerator NewGame()
+    {
+        var attackers = characterPool.GenAttackers(loadSpine.AttackerGenes, GameSpecs.AttackerAmount);
+        var defenders = characterPool.GenDefenders(loadSpine.DefenderGenes, GameSpecs.DefenderAmount);
+        yield return new WaitUntil(() => ((attackers.Count + defenders.Count) == GameSpecs.CharTotal));
+        battleSort.PreparingBattle(createMap.Tables, attackers, defenders);
         yield return new WaitForSecondsRealtime(1f);
-        StartGame(createMap.Tables, genChar.Attackers, genChar.Defenders);
+        StartGame(createMap.Tables, attackers, defenders);
     }
     public void StartGame(Cell[,] _table, List<Attacker> _attackers, List<Defender> _defenders)
     {
@@ -53,5 +57,10 @@ public class GameManager : Singleton<GameManager>
     {
         uiManager.OnStopGame();
         gameState = GameState.Stop;
+    }
+    public void ReMatch()
+    {
+        uiManager.OnPreparing();
+        StartCoroutine(NewGame());
     }
 }

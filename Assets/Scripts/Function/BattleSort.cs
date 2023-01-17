@@ -38,6 +38,7 @@ public class BattleSort : MonoBehaviour
                 for (int j = (int)block.z; j < block.w; j++)
                 {
                     attackers[charIndex].SetPosition(cellMap[i, j], i, j);
+                    attackers[charIndex].CharacterAlive();
                     cellMap[i, j].Char = attackers[charIndex];
                     if (rotate) attackers[charIndex].Rotate();
                     charIndex += 1;
@@ -54,10 +55,11 @@ public class BattleSort : MonoBehaviour
             for (int j = (int)block.z; j < block.w; j++)
             {
                 defenders[charIndex].SetPosition(cellMap[i, j], i, j);
-                cellMap[i, j].Char=defenders[charIndex];
+                defenders[charIndex].CharacterAlive();
+                cellMap[i, j].Char = defenders[charIndex];
                 charIndex += 1;
             }
         }
     }
-    
+
 }

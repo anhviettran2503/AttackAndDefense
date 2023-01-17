@@ -6,7 +6,7 @@ public abstract class Panel : MonoBehaviour
 {
     [SerializeField] private GameObject content;
 
-    public void EnableContent()
+    public virtual void EnableContent()
     {
         content.SetActive(true);
     }

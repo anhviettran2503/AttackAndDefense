@@ -521,6 +521,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   content: {fileID: 2234288}
+  resultText: {fileID: 914669485}
 --- !u!1 &198019694
 GameObject:
   m_ObjectHideFlags: 0
@@ -793,7 +794,7 @@ GameObject:
   - component: {fileID: 420749481}
   - component: {fileID: 420749482}
   m_Layer: 0
-  m_Name: GenChar
+  m_Name: Pool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -828,6 +829,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackerPrefab: {fileID: 6185921152860103428, guid: 5c405c3d60175e64a8cdcbd28d939699, type: 3}
   defenderPrefab: {fileID: 6837267004208680106, guid: 45f3a525557ecb546952122a27958184, type: 3}
+  attackers: []
+  defenders: []
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1580,6 +1583,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bb70da11508ef747a9948e6f9d867f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackers: []
+  defenders: []
   battleDuration: 1
   battleTurn: 0
 --- !u!4 &1068784901
@@ -2353,7 +2358,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1544135205}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 169900128}
+        m_TargetAssemblyTypeName: ResultUI, Assembly-CSharp
+        m_MethodName: ReMatch
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1544135205
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2917,7 +2934,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 467b157c800be024893a89e30ab61877, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  genChar: {fileID: 420749482}
+  characterPool: {fileID: 420749482}
   loadSpine: {fileID: 400019340}
   createMap: {fileID: 1745662431}
   battleSort: {fileID: 615238431}

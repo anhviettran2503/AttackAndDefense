@@ -5,16 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Game.unity
     guid: 2cda990e2423bbf4892e6590ba056729
-  - enabled: 1
-    path: Assets/Plugin/AxieInfinity/AxieMixerUnity/Demo/0. Loading Screen/Loading.unity
-    guid: e9ede3c3dfc7148409d176224d6293ba
-  - enabled: 1
-    path: Assets/Plugin/AxieInfinity/AxieMixerUnity/Demo/1. Basic/DemoMixer.unity
-    guid: f39d58a49bf9a5646983f364312cfd21
-  - enabled: 1
-    path: Assets/Plugin/AxieInfinity/AxieMixerUnity/Demo/2. Flappy Axie/FlappyAxie.unity
-    guid: 3e62be8942ba54570a24aa9cc83af773
   m_configObjects: {}
